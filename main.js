@@ -5,27 +5,27 @@ import Settings from './classes/Settings'
 import ManagerInput from './classes/ManagerInput'
 import ManagerURL from './classes/ManagerURL'
 
-const settings = new Settings()
-
 const url = new ManagerURL()
-settings.addListener(url)
 
 const width = +url.searchParams.get('width')
 const height = +url.searchParams.get('height')
 const cellSize = +url.searchParams.get('cell_size')
 
+const settings = new Settings({
+  width, height, cellSize
+})
+settings.addListener(url)
+
 const app = new FieldCanvas({
-  height,
-  width,
   elContainer: 'main',
-  cellSize,
+  ...settings.getParams(),
 })
 settings.addListener(app)
 
 const inputs = new ManagerInput(settings)
 settings.addListener(inputs)
 
-settings.notify({ width, height, cellSize })
+settings.notify()
 
 const {
   startAnimation,
