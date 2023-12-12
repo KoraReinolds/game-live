@@ -21,7 +21,6 @@ class Field {
       cellSize: Field.DEFAULT_CELL_SIZE,
       ...args,
     }
-    console.log(params)
 
     const container = document.querySelector(params.elContainer)
     const element = params.elCreator()
@@ -40,6 +39,12 @@ class Field {
     this._element.addEventListener('click', this.setCoords.bind(this))
   }
 
+  resize({ width, height, cellSize }) {
+    if (width) this.width = width
+    if (height) this.height = height
+    if (cellSize) this.cellSize = cellSize
+  }
+
   setCellLive(cellIndex) {
     throw new Error('Abstract method must be implemented')
   }
@@ -52,6 +57,12 @@ class Field {
     const y = Math.floor((clientY - top) / this._cellSize)
 
     this.setCellLive(y * this.width + x)
+  }
+
+  set cellSize(value) {
+    this._cellSize = value
+    this.width = this.width
+    this.height = this.height
   }
 
   get width() {

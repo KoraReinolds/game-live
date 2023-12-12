@@ -26,12 +26,12 @@ class FieldCanvas extends Field {
     this._gl = canvas.getContext("webgl")
 
     const gl = this._gl
-    this.textures = new Textures(gl, this.width * this.height)
+    this._textures = new Textures(gl, this.width * this.height)
 
-    this.textures.create('data')
-    this.textures.create('display')
+    this._textures.create('data')
+    this._textures.create('display')
 
-    this.frameBuffers = new FrameBuffers(this.textures)
+    this.frameBuffers = new FrameBuffers(this._textures)
     this.frameBuffers.create('display')
 
     this._shaders = new Shaders(gl)
@@ -44,7 +44,7 @@ class FieldCanvas extends Field {
     const setUniforms = (programName) => {
       return this._programs
         .setUniform('u_data_size', programName, (loc) => {
-          gl.uniform2f(loc, this.textures.width, this.textures.height)
+          gl.uniform2f(loc, this._textures.width, this._textures.height)
         })
         .setUniform('u_grid', programName, (loc) => {
           gl.uniform2f(loc, this.width, this.height)
@@ -85,15 +85,32 @@ class FieldCanvas extends Field {
 
   _displayData() {
     this.frameBuffers.unbind()
-    this._gl.bindTexture(this._gl.TEXTURE_2D, this.textures.get('display'))
+    this._gl.bindTexture(this._gl.TEXTURE_2D, this._textures.get('display'))
     this._draw('display', this._gl.canvas.width, this._gl.canvas.height)
   }
 
-  update() {
-    const data = this.frameBuffers.readData('display')
-    this.textures.setDataToTexture('data', data)
+  resize(data) {
+    super.resize(data)
+    this._programs.updateLocation('data', 'u_data')
+    this._programs.updateLocation('data', 'u_grid')
+    this._programs.updateLocation('data', 'u_resolution')
+    this._programs.updateLocation('display', 'u_data')
+    this._programs.updateLocation('display', 'u_grid')
+    this._programs.updateLocation('display', 'u_resolution')
+    this._textures.setDataToTexture(
+      'display',
+      this._textures.initData()
+    )
+    this._displayData()
+  }
 
-    this._draw('data', this.textures.width, this.textures.height)
+  update() {
+    this._textures.setDataToTexture(
+      'data',
+      this.frameBuffers.readData('display')
+    )
+
+    this._draw('data', this._textures.width, this._textures.height)
 
     this._displayData()
   }
@@ -101,7 +118,7 @@ class FieldCanvas extends Field {
   setCellLive(index) {
     const data = this.frameBuffers.readData('display')
     data[index] = 1
-    this.textures.setDataToTexture('display', data)
+    this._textures.setDataToTexture('display', data)
 
     this._displayData()
   }

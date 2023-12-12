@@ -3,6 +3,7 @@ class Programs {
   _gl
   _shaders
   _programs = {}
+  _locations = {}
 
   constructor(shaders) {
     this._shaders = shaders
@@ -14,6 +15,22 @@ class Programs {
     if (program) return program
     else {
       console.warn(`Program '${name}' not found`)
+    }
+  }
+
+  _setLocation(name, location, f) {
+    this._locations[name] = {
+      location, f
+    }
+  }
+
+  updateLocation(programName, uniformName) {
+    const name = programName + uniformName
+    const program = this.get(programName)
+    if (this._locations[name] && program) {
+      this._gl.useProgram(program)
+      const { f, location } = this._locations[name]
+      f(location)
     }
   }
 
@@ -44,6 +61,7 @@ class Programs {
     if (program) {
       this._gl.useProgram(program)
       const location = this._gl.getUniformLocation(program, uniformName)
+      this._setLocation(programName + uniformName, location, updateLocation)
       updateLocation(location)
     }
     return this

@@ -15,7 +15,6 @@ class Textures {
       if (textureSize % width === 0) {
         this._width = width
         this._height = textureSize / width
-        console.log(this._width, this._height)
         break
       }
       width -= 1
@@ -37,8 +36,12 @@ class Textures {
     return new Uint8Array(
       new Array(4 * this.width * this.height)
         .fill(0)
-        .map(() => (Math.random() > 0.5) ? 255 : 0)
     )
+  }
+
+  randomData() {
+    this.initData()
+      .map(() => (Math.random() > 0.5) ? 255 : 0)
   }
 
   setDataToTexture(name, data) {
