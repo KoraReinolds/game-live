@@ -6,7 +6,18 @@ class Textures {
 
   constructor(gl, dataSize) {
     this._gl = gl
+    this.resetTextureSize(dataSize)
+  }
 
+  get width() {
+    return this._width
+  }
+
+  get height() {
+    return this._height
+  }
+
+  resetTextureSize(dataSize) {
     let textureSize = Math.trunc(dataSize / 4)
     if (dataSize % 4) textureSize += 1
 
@@ -24,14 +35,6 @@ class Textures {
     }
   }
 
-  get width() {
-    return this._width
-  }
-
-  get height() {
-    return this._height
-  }
-
   initData() {
     return new Uint8Array(
       new Array(4 * this.width * this.height)
@@ -40,7 +43,7 @@ class Textures {
   }
 
   randomData() {
-    this.initData()
+    return this.initData()
       .map(() => (Math.random() > 0.5) ? 255 : 0)
   }
 

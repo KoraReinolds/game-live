@@ -33,11 +33,21 @@ const {
   isAnimate
 } = animate(app.update.bind(app))
 
-document.addEventListener('contextmenu', (event) => {
-  event.preventDefault()
-  if (isAnimate()) {
-    stopAnimation()
-  } else {
-    startAnimation()
-  }
-})
+const randomBtn = document.getElementById('random_btn')
+if (randomBtn) {
+  randomBtn.addEventListener('click', app.displayRandomData.bind(app))
+}
+
+const animationBtn = document.getElementById('animation_btn')
+if (animationBtn) {
+  animationBtn.addEventListener('click', (event) => {
+    event.preventDefault()
+    if (isAnimate()) {
+      stopAnimation()
+      animationBtn.innerHTML = 'Start'
+    } else {
+      startAnimation()
+      animationBtn.innerHTML = 'Stop'
+    }
+  })
+}

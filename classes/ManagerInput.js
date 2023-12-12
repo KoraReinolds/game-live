@@ -11,9 +11,9 @@ class ManagerInput {
   }
 
   setupListeners() {
-    this.widthInput.addEventListener('input', () => this.handleInputChange())
-    this.heightInput.addEventListener('input', () => this.handleInputChange())
-    this.cellSizeInput.addEventListener('input', () => this.handleInputChange())
+    this.widthInput?.addEventListener('input', () => this.handleInputChange())
+    this.heightInput?.addEventListener('input', () => this.handleInputChange())
+    this.cellSizeInput?.addEventListener('input', () => this.handleInputChange())
   }
 
   resize({ width, height, cellSize }) {

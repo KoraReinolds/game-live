@@ -89,12 +89,21 @@ class FieldCanvas extends Field {
     this._draw('display', this._gl.canvas.width, this._gl.canvas.height)
   }
 
+  displayRandomData() {
+    this._textures.setDataToTexture(
+      'display',
+      this._textures.randomData()
+    )
+    this._displayData()
+  }
+
   resize(data) {
     super.resize(data)
-    this._programs.updateLocation('data', 'u_data')
+    this._textures.resetTextureSize(this.width * this.height)
+    this._programs.updateLocation('data', 'u_data_size')
     this._programs.updateLocation('data', 'u_grid')
     this._programs.updateLocation('data', 'u_resolution')
-    this._programs.updateLocation('display', 'u_data')
+    this._programs.updateLocation('display', 'u_data_size')
     this._programs.updateLocation('display', 'u_grid')
     this._programs.updateLocation('display', 'u_resolution')
     this._textures.setDataToTexture(

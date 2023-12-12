@@ -17,7 +17,7 @@ class ManagerURL {
   resize({ width, height, cellSize }) {
     if (width) this.searchParams.set('width', width)
     if (height) this.searchParams.set('height', height)
-    if (cellSize) this.searchParams.set('cellSize', cellSize)
+    if (cellSize) this.searchParams.set('cell_size', cellSize)
     window.history.replaceState({}, '', '?' + this.searchParams.toString())
   }
 

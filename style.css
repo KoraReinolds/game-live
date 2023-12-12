@@ -53,3 +53,7 @@ aside section {
   justify-content: space-between;
   margin-bottom: 12px;
 }
+
+aside button {
+  margin-bottom: 12px;
+}
