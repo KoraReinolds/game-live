@@ -27,11 +27,19 @@ settings.addListener(inputs)
 
 settings.notify()
 
+const fpsField = document.getElementById('fps_value')
+const updateFPS = fpsField
+  ? function (value) { console.log(value); fpsField.innerHTML = value }
+  : undefined
+
 const {
   startAnimation,
   stopAnimation,
-  isAnimate
-} = animate(app.update.bind(app))
+  isAnimate,
+} = animate({
+  update: app.update.bind(app),
+  updateFPS,
+})
 
 const randomBtn = document.getElementById('random_btn')
 if (randomBtn) {
