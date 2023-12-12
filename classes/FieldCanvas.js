@@ -98,6 +98,14 @@ class FieldCanvas extends Field {
     this._displayData()
   }
 
+  setCellLive(index) {
+    const data = this.frameBuffers.readData('display')
+    data[index] = 1
+    this.textures.setDataToTexture('display', data)
+
+    this._displayData()
+  }
+
 }
 
 export default FieldCanvas

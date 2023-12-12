@@ -36,6 +36,22 @@ class Field {
     this._cellSize = Math.max(Field.MIN_CELL_SIZE, params.cellSize)
     this.width = Math.max(Field.MIN_WIDTH, params.width)
     this.height = Math.max(Field.MIN_HEIGHT, params.height)
+
+    this._element.addEventListener('click', this.setCoords.bind(this))
+  }
+
+  setCellLive(cellIndex) {
+    throw new Error('Abstract method must be implemented')
+  }
+
+  setCoords(event) {
+    const { left, top } = this._element.getBoundingClientRect()
+    const { clientX, clientY } = event
+
+    const x = Math.floor((clientX - left) / this._cellSize)
+    const y = Math.floor((clientY - top) / this._cellSize)
+
+    this.setCellLive(y * this.width + x)
   }
 
   get width() {
