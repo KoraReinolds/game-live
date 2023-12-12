@@ -97,6 +97,14 @@ class FieldCanvas extends Field {
     this._displayData()
   }
 
+  clearField() {
+    this._textures.setDataToTexture(
+      'display',
+      this._textures.initData()
+    )
+    this._displayData()
+  }
+
   resize(data) {
     super.resize(data)
     this._textures.resetTextureSize(this.width * this.height)
@@ -106,11 +114,7 @@ class FieldCanvas extends Field {
     this._programs.updateLocation('display', 'u_data_size')
     this._programs.updateLocation('display', 'u_grid')
     this._programs.updateLocation('display', 'u_resolution')
-    this._textures.setDataToTexture(
-      'display',
-      this._textures.initData()
-    )
-    this._displayData()
+    this.clearField()
   }
 
   update() {

@@ -29,7 +29,7 @@ settings.notify()
 
 const fpsField = document.getElementById('fps_value')
 const updateFPS = fpsField
-  ? function (value) { console.log(value); fpsField.innerHTML = value }
+  ? function (value) { fpsField.innerHTML = value }
   : undefined
 
 const {
@@ -40,6 +40,11 @@ const {
   update: app.update.bind(app),
   updateFPS,
 })
+
+const clearBtn = document.getElementById('clear_btn')
+if (clearBtn) {
+  clearBtn.addEventListener('click', app.clearField.bind(app))
+}
 
 const randomBtn = document.getElementById('random_btn')
 if (randomBtn) {
