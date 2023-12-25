@@ -31,8 +31,8 @@ class FieldCanvas extends Field {
     this._textures.create('data')
     this._textures.create('display')
 
-    this.frameBuffers = new FrameBuffers(this._textures)
-    this.frameBuffers.create('display')
+    this._frameBuffers = new FrameBuffers(this._textures)
+    this._frameBuffers.create('display')
 
     this._shaders = new Shaders(gl)
     const vertexShader = this._shaders.createVertex(vertexShaderSource)
@@ -84,7 +84,7 @@ class FieldCanvas extends Field {
   }
 
   _displayData() {
-    this.frameBuffers.unbind()
+    this._frameBuffers.unbind()
     this._gl.bindTexture(this._gl.TEXTURE_2D, this._textures.get('display'))
     this._draw('display', this._gl.canvas.width, this._gl.canvas.height)
   }
@@ -120,7 +120,7 @@ class FieldCanvas extends Field {
   update() {
     this._textures.setDataToTexture(
       'data',
-      this.frameBuffers.readData('display')
+      this._frameBuffers.readData('display')
     )
 
     this._draw('data', this._textures.width, this._textures.height)
@@ -129,8 +129,11 @@ class FieldCanvas extends Field {
   }
 
   setCellLive(index) {
-    const data = this.frameBuffers.readData('display')
-    data[index] = 1
+    const data = this._frameBuffers.readData('display')
+    const i = Math.floor(index / 8)
+    const bit = Math.floor(index % 8)
+
+    data[i] = data[i] | (1 << bit)
     this._textures.setDataToTexture('display', data)
 
     this._displayData()

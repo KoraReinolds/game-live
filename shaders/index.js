@@ -26,10 +26,17 @@ float getIndex(vec2 uv, vec2 size) {
   return getIndexFromCoords(coords, size);      
 }
 `
+const getValueFromChannel = `
+float getValueFromChannel(float channel, float index) {
+  return floor(mod((channel * 255.) / pow(2.0, index), 2.0));
+}
+`
 
 const getValueOfColorIndex = `
-float getValueOfColorIndex(vec4 color, float i) {
+float getValueOfColorIndex(vec4 color, float index) {
+  float i = floor(index / 8.0);
   float v = color.r;
+
   if (i == 1.0) {
     v = color.g;
   } else if (i == 2.0) {
@@ -37,21 +44,17 @@ float getValueOfColorIndex(vec4 color, float i) {
   } else if (i == 3.0) {
     v = color.a;
   }
-  
-  if (v == 0.0) {
-    return 0.0;
-  } else {
-    return 1.0;
-  }
+
+  return getValueFromChannel(v, mod(index, 8.0));
 }
 `
 const getColorFromTexture = `
 vec4 getColorFromTexture(sampler2D texture, vec2 texture_size, float index) {
-  float data_in_row = texture_size.x * 4.0;
+  float data_in_row = texture_size.x * 32.0;
   vec2 half_step = (1.0 / texture_size) / 2.0;
   vec2 data_coords = getCoordsFromIndex(index, data_in_row);
   vec2 coords_color = vec2(
-    floor(data_coords.x / 4.0),
+    floor(data_coords.x / 32.0),
     data_coords.y
   ) / texture_size;
   vec4 color = texture2D(texture, coords_color + half_step);
@@ -64,7 +67,7 @@ const getValueFromTexture = `
 float getValueFromTexture(sampler2D texture, vec2 texture_size, float index) {
   vec4 color = getColorFromTexture(texture, texture_size, index);
 
-  return getValueOfColorIndex(color, mod(index, 4.0));
+  return getValueOfColorIndex(color, mod(index, 32.0));
 }
 `
 
@@ -100,6 +103,7 @@ float grid(vec2 uv, vec2 scale, vec2 thickness) {
   return max(grid_x, grid_y);
 }
 
+${getValueFromChannel}
 ${getCoords}
 ${getCoordsFromIndex}
 ${getIndexFromCoords}
@@ -120,6 +124,9 @@ void main() {
     grid(uv, u_grid, pixel_size)
   );
   
+  vec3 c = texture2D(u_data, uv).rgb;
+  vec3 co = texture2D(u_data, vec2(0.0)).rgb;
+
   scene=mix(
     scene,
     RGB_GREEN,
@@ -156,6 +163,7 @@ varying vec2 v_position;
 uniform vec2 u_grid;
 uniform vec2 u_data_size;
 
+${getValueFromChannel}
 ${getCoords}
 ${getCoordsFromIndex}
 ${getIndexFromCoords}
@@ -233,13 +241,28 @@ float getNewState(float isLive, float index, vec2 grid, vec2 data_size, sampler2
   return 0.0;
 }
 
-vec4 getNewColorState(vec4 color, float index, vec2 grid, vec2 data_size, sampler2D u_data) {
-  float i = index*4.0;
+float getNewChannel(float channel, float index, vec2 grid, vec2 data_size, sampler2D u_data) {
+  float channel_value = 0.0;
 
-  color.r = getNewState(color.r, i + 0.0, grid, data_size, u_data);
-  color.g = getNewState(color.g, i + 1.0, grid, data_size, u_data);
-  color.b = getNewState(color.b, i + 2.0, grid, data_size, u_data);
-  color.a = getNewState(color.a, i + 3.0, grid, data_size, u_data);
+  const float iterations = 8.0;
+
+  for (float i = 0.0; i < iterations; ++i) {
+    float isLive = getValueFromChannel(channel, mod(index + i, 8.0));
+    if (getNewState(isLive, index + i, grid, data_size, u_data) == 1.0) {
+      channel_value += pow(2.0, i);
+    }
+  }
+
+  return channel_value / 255.;
+}
+
+vec4 getNewColorState(vec4 color, float index, vec2 grid, vec2 data_size, sampler2D u_data) {
+  float i = index*32.0;
+
+  color.r = getNewChannel(color.r, i + 0.0, grid, data_size, u_data);
+  color.g = getNewChannel(color.g, i + 8.0, grid, data_size, u_data);
+  color.b = getNewChannel(color.b, i + 16.0, grid, data_size, u_data);
+  color.a = getNewChannel(color.a, i + 24.0, grid, data_size, u_data);
  
   return color;
 }

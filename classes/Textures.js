@@ -18,8 +18,8 @@ class Textures {
   }
 
   resetTextureSize(dataSize) {
-    let textureSize = Math.trunc(dataSize / 4)
-    if (dataSize % 4) textureSize += 1
+    let textureSize = Math.trunc(dataSize / 32)
+    if (dataSize % 32) textureSize += 1
 
     let width = Math.min(textureSize, this._gl.canvas.clientWidth) || 0
     while (width > 0) {
@@ -44,7 +44,7 @@ class Textures {
 
   randomData() {
     return this.initData()
-      .map(() => (Math.random() > 0.5) ? 255 : 0)
+      .map(() => Math.random() * 255)
   }
 
   setDataToTexture(name, data) {
