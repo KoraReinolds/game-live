@@ -14,10 +14,11 @@ class ManagerURL {
     return this._url.searchParams
   }
 
-  resize({ width, height, cellSize }) {
+  resize({ width, height, cellSize, isFullSize }) {
     if (width) this.searchParams.set('width', width)
     if (height) this.searchParams.set('height', height)
     if (cellSize) this.searchParams.set('cell_size', cellSize)
+    if (isFullSize) this.searchParams.set('full_size', isFullSize)
     window.history.replaceState({}, '', '?' + this.searchParams.toString())
   }
 

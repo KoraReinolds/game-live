@@ -6,17 +6,19 @@ class Settings {
   static DEFAULT_WIDTH = 20
   static DEFAULT_HEIGHT = 20
   static DEFAULT_CELL_SIZE = 10
-  static MAX_SIZE = 1000
+  static DEFAULT_FULL_SIZE = 'true'
 
   _cellSize
   _width
   _height
+  _fullSize
 
   constructor(params = {}) {
     this.listeners = []
 
     this.width = params.width || Settings.DEFAULT_WIDTH
     this.height = params.height || Settings.DEFAULT_HEIGHT
+    this.fullSize = params.fullSize || Settings.DEFAULT_FULL_SIZE
     this.cellSize = params.cellSize || Settings.DEFAULT_CELL_SIZE
   }
 
@@ -30,12 +32,33 @@ class Settings {
 
   set cellSize(value) {
     let cell_size = +value
-    const maxSide = Math.max(this._width, this._height)
-    while (
-      cell_size > Settings.MIN_CELL_SIZE
-      && (maxSide * cell_size) > Settings.MAX_SIZE
-    ) cell_size -= 1
+    const main = document.querySelector('main')
+
+    if (this._fullSize !== 'true') {
+      while (
+        cell_size > Settings.MIN_CELL_SIZE
+        && ((this._height * cell_size) > main.clientHeight
+        || (this._width * cell_size) > main.clientWidth)
+      ) cell_size -= 1
+    }
+
     this._cellSize = Math.max(Settings.MIN_CELL_SIZE, cell_size)
+
+    if (this._fullSize === 'true') {
+      this.width = Math.floor(main.clientWidth / this._cellSize)
+      this.height = Math.floor(main.clientHeight / this._cellSize)
+    }
+  }
+
+  set fullSize(value) {
+    if (value === 'true') {
+      const main = document.querySelector('main')
+      this.width = Math.floor(main.clientWidth / this._cellSize)
+      this.height = Math.floor(main.clientHeight / this._cellSize)
+      this._fullSize = value
+    } else {
+      this._fullSize = 'false'
+    }
   }
 
   getParams() {
@@ -43,6 +66,7 @@ class Settings {
       cellSize: this._cellSize,
       width: this._width,
       height: this._height,
+      isFullSize: this._fullSize,
     }
   }
 
@@ -52,10 +76,11 @@ class Settings {
 
   notify(newData) {
     if (newData) {
-      const { width, height, cellSize } = newData
+      const { width, height, cellSize, isFullSize } = newData
       if (width) this.width = width
       if (height) this.height = height
       if (cellSize) this.cellSize = cellSize
+      if (isFullSize) this.fullSize = isFullSize
     }
     const data = this.getParams()
     this.listeners.forEach(listener => listener.resize(data))

@@ -33,6 +33,8 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
+  height: 100%;
 } 
 
 aside,
@@ -47,16 +49,25 @@ aside {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 2vh;
+  padding-right: 2vh;
+  padding-left: 2vh;
+}
+
+aside input[type='number'] {
+  width: 10vh;
+}
+
+aside input[type='checkbox'] {
+  width: 2vh;
 }
 
 aside input {
-  margin-left: 1vh;
+  margin-left: auto;
   height: 2vh;
-  width: 10vh;
   font-size: 1.5vh;
   border: 0;
   padding: 0.5vh;
+  margin: 0;
 }
 
 aside h1 {
