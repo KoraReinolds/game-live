@@ -52,7 +52,8 @@ class Settings {
 
   set fullSize(value) {
     if (value === 'true') {
-      this.width = Math.floor(window.innerWidth / this._cellSize)
+      // const aside = document.querySelector('aside')
+      this.width = Math.floor((window.innerWidth) / this._cellSize)
       this.height = Math.floor(window.innerHeight / this._cellSize)
       this._fullSize = value
     } else {

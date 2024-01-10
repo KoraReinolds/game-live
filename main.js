@@ -53,9 +53,11 @@ if (randomBtn) {
 }
 
 const animationBtn = document.getElementById('animation_btn')
+const settingsPanel = document.querySelector('aside')
 if (animationBtn) {
   animationBtn.addEventListener('click', (event) => {
     event.preventDefault()
+    settingsPanel.classList.toggle('hide')
     if (isAnimate()) {
       stopAnimation()
       animationBtn.innerHTML = 'Start'
