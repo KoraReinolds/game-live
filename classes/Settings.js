@@ -52,9 +52,8 @@ class Settings {
 
   set fullSize(value) {
     if (value === 'true') {
-      const main = document.querySelector('main')
-      this.width = Math.floor(main.clientWidth / this._cellSize)
-      this.height = Math.floor(main.clientHeight / this._cellSize)
+      this.width = Math.floor(window.innerWidth / this._cellSize)
+      this.height = Math.floor(window.innerHeight / this._cellSize)
       this._fullSize = value
     } else {
       this._fullSize = 'false'
@@ -76,7 +75,7 @@ class Settings {
 
   notify(newData) {
     if (newData) {
-      const { width, height, cellSize, isFullSize } = newData
+      const { width, height, cellSize, isFullSize = this._fullSize } = newData
       if (width) this.width = width
       if (height) this.height = height
       if (cellSize) this.cellSize = cellSize

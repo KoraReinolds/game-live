@@ -10,7 +10,7 @@ const url = new ManagerURL()
 const width = +url.searchParams.get('width')
 const height = +url.searchParams.get('height')
 const cellSize = +url.searchParams.get('cell_size')
-const fullSize = +url.searchParams.get('full_size')
+const fullSize = url.searchParams.get('full_size')
 
 const settings = new Settings({
   width, height, cellSize, fullSize
@@ -65,3 +65,5 @@ if (animationBtn) {
     }
   })
 }
+
+window.addEventListener('resize', settings.notify.bind(settings))
