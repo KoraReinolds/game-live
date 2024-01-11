@@ -1,7 +1,8 @@
 export default ({ update, updateFPS }) => {
 
   let animationId
-  let lastFrames = []
+  let initialTimestamp
+  let initialFrame
 
   function isAnimate() {
     return !!animationId
@@ -9,17 +10,12 @@ export default ({ update, updateFPS }) => {
 
   function calculateFPS(timestamp) {
 
-    lastFrames.push(timestamp)
+    if (!initialTimestamp) initialTimestamp = timestamp
+    if (!initialFrame) initialFrame = animationId
 
-    if (lastFrames.length > 2) {
-      lastFrames.shift()
-
-      const elapsedSeconds = (lastFrames.at(-1) - lastFrames[0]) / 1000
-
-      updateFPS?.(
-        Math.round(lastFrames.length / elapsedSeconds)
-      )
-    }
+    updateFPS?.(
+      Math.round((animationId - initialFrame) / ((timestamp - initialTimestamp) / 1000))
+    )
   }
 
   function startAnimation(timestamp) {
@@ -31,7 +27,8 @@ export default ({ update, updateFPS }) => {
   }
 
   function stopAnimation() {
-    lastFrames = []
+    initialTimestamp = undefined
+    initialFrame = undefined
     updateFPS?.('')
     cancelAnimationFrame(animationId)
     animationId = undefined

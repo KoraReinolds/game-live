@@ -30,7 +30,7 @@ settings.notify()
 
 const fpsField = document.getElementById('fps_value')
 const updateFPS = fpsField
-  ? function (value) { fpsField.innerHTML = value }
+  ? function (value) { fpsField.value = value || 0 }
   : undefined
 
 const {
